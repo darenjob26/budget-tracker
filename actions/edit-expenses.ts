@@ -1,22 +1,32 @@
-import { ExpenseType } from "@/lib/types";
-
-export default async function editExpenses(data: ExpenseType) {
+export default async function editExpenses({
+	_id,
+	name,
+	date,
+	category,
+	amount,
+	paid,
+}: {
+	_id: string;
+	name: string;
+	date: string;
+	category: string;
+	amount: number;
+	paid: boolean;
+}) {
 	try {
-		const res = await fetch(
-			`http://localhost:3000/api/expenses/${data._id}`,
-			{
-				method: "PUT",
-				headers: {
-					"Content-type": "application/json",
-				},
-				body: JSON.stringify({
-					newName: data.name,
-					newDate: data.date,
-					newAmount: data.amount,
-					newPaid: data.paid,
-				}),
-			}
-		);
+		const res = await fetch(`http://localhost:3000/api/expenses/${_id}`, {
+			method: "PUT",
+			headers: {
+				"Content-type": "application/json",
+			},
+			body: JSON.stringify({
+				newName: name,
+				newDate: date,
+				newAmount: amount,
+				newCategory: category,
+				newPaid: paid,
+			}),
+		});
 
 		if (res.ok) {
 			return await res.json();

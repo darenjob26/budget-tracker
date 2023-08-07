@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import AddCategoriesButton from "./AddCategoriesButton";
-import { getCategories } from "@/actions/get-categories";
 import CategoriesActionMenu from "./CategoriesActionMenu";
 import { CategoryType } from "@/lib/types";
 import CategoryName from "../CategoryName";

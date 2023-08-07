@@ -4,6 +4,7 @@ import SummaryCard from "@/components/Overview/SummaryCard";
 import { AddExpenseButton } from "./AddExpenseButton";
 import { CategoryType, ExpenseListType } from "@/lib/types";
 import { getExpenses } from "@/actions/get-expenses";
+import { calculateMonthlySummary, toMoneyString } from "@/lib/helpers";
 
 export default async function Overview({
 	categories,
@@ -12,14 +13,37 @@ export default async function Overview({
 }) {
 	const expenses: ExpenseListType | undefined = await getExpenses();
 
+	let totalExpense = {
+		totalExpense: 0,
+		totalPaid: 0,
+		totalRemaining: 0,
+	};
+
+	if (expenses) {
+		totalExpense = Object.keys(expenses).reduce((acc, curr) => {
+			const monthExpenses = calculateMonthlySummary(expenses[curr]);
+			acc.totalExpense += monthExpenses.totalExpense;
+			acc.totalPaid += monthExpenses.totalPaid;
+			acc.totalRemaining += monthExpenses.totalRemaining;
+
+			return acc;
+		}, totalExpense);
+	}
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="grid gap-4 grid-cols-3">
-				<SummaryCard title="Total Year Expenses" amount="145,533.54" />
-				<SummaryCard title="Total Paid Expenses" amount="97,432.12" />
+				<SummaryCard
+					title="Total Year Expenses"
+					amount={toMoneyString(totalExpense.totalExpense)}
+				/>
+				<SummaryCard
+					title="Total Paid Expenses"
+					amount={toMoneyString(totalExpense.totalPaid)}
+				/>
 				<SummaryCard
 					title="Total Remaining Expenses"
-					amount="48,101.42"
+					amount={toMoneyString(totalExpense.totalRemaining)}
 				/>
 			</div>
 			<div className="">
@@ -29,7 +53,7 @@ export default async function Overview({
 					</div>
 					<AddExpenseButton categories={categories} />
 				</div>
-				<MonthlyExpenses expenses={expenses} />
+				<MonthlyExpenses expenses={expenses} categories={categories} />
 			</div>
 		</div>
 	);

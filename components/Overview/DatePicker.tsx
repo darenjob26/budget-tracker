@@ -14,33 +14,57 @@ import {
 } from "@/components/ui/popover";
 
 export function DatePicker({
-	date,
-	setDate,
+	days,
+	setDays,
+	mode,
 }: {
-	date: Date | undefined;
-	setDate: (e: Date | undefined) => void;
+	days: Date[] | undefined;
+	setDays: (e: Date[] | undefined) => void;
+	mode: "single" | "multiple";
 }) {
+	const today = new Date();
+	const defaultMonth = days
+		? new Date(
+				days[days.length - 1].getFullYear(),
+				days[days.length - 1].getMonth()
+		  )
+		: new Date(today.getFullYear(), today.getMonth());
+
+	let label = days ? days.map(day => format(day, "PPP")).join(", ") : "";
+
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button
 					variant={"outline"}
 					className={cn(
-						"w-[280px] justify-start text-left font-normal",
-						!date && "text-muted-foreground"
+						"w-[280px] justify-start text-left font-normal truncate ",
+						!days && "text-muted-foreground"
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
-					{date ? format(date, "PPP") : ""}
+					{label}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0">
-				<Calendar
-					mode="single"
-					selected={date}
-					onSelect={e => setDate(e)}
-					initialFocus
-				/>
+				{mode === "multiple" ? (
+					<Calendar
+						defaultMonth={defaultMonth}
+						mode="multiple"
+						min={1}
+						selected={days}
+						onSelect={e => setDays(e)}
+					/>
+				) : (
+					<Calendar
+						defaultMonth={defaultMonth}
+						mode="single"
+						// @ts-ignore
+						selected={days[0]}
+						// @ts-ignore
+						onSelect={e => setDays([e])}
+					/>
+				)}
 			</PopoverContent>
 		</Popover>
 	);

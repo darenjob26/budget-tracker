@@ -15,7 +15,7 @@ export default function SummaryCard({
 				<CardTitle className="text-sm font-medium">{title}</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<div className="text-2xl font-bold">₱{amount}</div>
+				<div className="text-2xl font-semibold">{amount}</div>
 			</CardContent>
 		</Card>
 	);

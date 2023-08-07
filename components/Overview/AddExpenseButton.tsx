@@ -26,31 +26,34 @@ export function AddExpenseButton({
 }) {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [name, setName] = useState("");
-	const [date, setDate] = useState<Date>();
 	const [category, setCategory] = useState("");
-	const [amount, setAmount] = useState("");
+	const [amount, setAmount] = useState<number>();
+
+	const [days, setDays] = useState<Date[] | undefined>();
 
 	const router = useRouter();
 
 	const submitHandler = async () => {
-		if (!name || !date || !category || !amount) return;
+		if (!name || !days || !category || !amount) return;
 
-		const dateString = date.toLocaleDateString();
-		await addExpense({
-			name,
-			date: dateString,
-			category,
-			amount,
-		});
+		for (const day of days) {
+			const dateString = day.toLocaleDateString();
+			await addExpense({
+				name,
+				date: dateString,
+				category,
+				amount,
+			});
+		}
 		router.refresh();
 		onOpenChange();
 	};
 
 	const onOpenChange = () => {
 		setName("");
-		setDate(undefined);
+		setDays(undefined);
 		setCategory("");
-		setAmount("");
+		setAmount(0);
 		setModalOpen(!modalOpen);
 	};
 
@@ -80,7 +83,11 @@ export function AddExpenseButton({
 						<Label htmlFor="dueDate" className="text-right">
 							Due Date
 						</Label>
-						<DatePicker date={date} setDate={e => setDate(e)} />
+						<DatePicker
+							days={days}
+							setDays={setDays}
+							mode="multiple"
+						/>
 					</div>
 					<div className="grid grid-cols-4 items-center gap-4">
 						<Label htmlFor="category" className="text-right">
@@ -99,7 +106,9 @@ export function AddExpenseButton({
 						<Input
 							id="amount"
 							value={amount}
-							onChange={e => setAmount(e.target.value)}
+							onChange={e =>
+								setAmount(parseFloat(e.target.value))
+							}
 							onKeyDown={e => preventCharInput(e)}
 							className="col-span-3"
 							type="number"

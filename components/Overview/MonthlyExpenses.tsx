@@ -7,10 +7,10 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import ExpenseTable from "./ExpenseTable";
-import { ExpenseListType, ExpenseType } from "@/lib/types";
+import { CategoryType, ExpenseListType, ExpenseType } from "@/lib/types";
 import { toMoneyString } from "../../lib/helpers";
 
-function Title(title: string, amount: number) {
+function Title({ title, amount }: { title: string; amount: number }) {
 	return (
 		<div className="flex gap-3 items-center justify-between w-full pr-3">
 			<div>{title.split("-").join(" ")}</div>
@@ -21,8 +21,10 @@ function Title(title: string, amount: number) {
 
 export default function MonthlyExpenses({
 	expenses,
+	categories,
 }: {
 	expenses: ExpenseListType | undefined;
+	categories: CategoryType[];
 }) {
 	const calculateTotalForMonth = (monthlyExpenses: ExpenseType[]) => {
 		return monthlyExpenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -35,16 +37,17 @@ export default function MonthlyExpenses({
 					Object.keys(expenses).map((expensesKey: string) => (
 						<AccordionItem key={expensesKey} value={expensesKey}>
 							<AccordionTrigger className="hover:no-underline">
-								{Title(
-									expensesKey,
-									calculateTotalForMonth(
+								<Title
+									title={expensesKey}
+									amount={calculateTotalForMonth(
 										expenses[expensesKey]
-									)
-								)}
+									)}
+								/>
 							</AccordionTrigger>
 							<AccordionContent>
 								<ExpenseTable
 									expenseList={expenses[expensesKey]}
+									categories={categories}
 								/>
 							</AccordionContent>
 						</AccordionItem>

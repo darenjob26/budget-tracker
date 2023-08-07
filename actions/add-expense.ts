@@ -7,7 +7,7 @@ export default async function addExpense({
 	name: string;
 	date: string;
 	category: string;
-	amount: string;
+	amount: number;
 }) {
 	try {
 		const res = await fetch("http://localhost:3000/api/expenses", {

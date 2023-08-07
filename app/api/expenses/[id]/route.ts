@@ -12,14 +12,16 @@ export async function PUT(
 		const {
 			newName: name,
 			newDate: date,
+			newCategory: category,
 			newAmount: amount,
 			newPaid: paid,
 		} = await request.json();
-		console.log(name, date, amount, paid);
+
 		await connectMongoDB();
 		await Expenses.findByIdAndUpdate(id, {
 			name,
 			date,
+			category,
 			amount,
 			paid,
 		});
